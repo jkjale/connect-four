@@ -2,8 +2,10 @@ const Game = require('./game');
 
 function initApplication() {
     const game = new Game();
-    const rootNode = game.getRootNodeForDimension();
-    console.log('jaketest#@#@#------33333');
+    const board = game.getRootNodeForDimension();
+    document.getElementById('game').append(board);
+    console.log('testing ()#()#');
+    
 }
 
 if (document.readyState === 'loading') {
