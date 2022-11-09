@@ -1,0 +1,27 @@
+{
+  "name": "connect-four",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jkjale/connect-four.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jkjale/connect-four/issues"
+  },
+  "homepage": "https://github.com/jkjale/connect-four#readme",
+  "dependencies": {
+    "node": "^19.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
+  }
+}
