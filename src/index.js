@@ -1,11 +1,14 @@
 const Game = require('./game');
 
 function initApplication() {
-    const game = new Game();
-    const board = game.getRootNodeForDimension();
-    document.getElementById('game').append(board);
-    console.log('testing ()#()#');
-    
+    const game = new Game(8, 10);
+    // const slot = game.createSlot();
+    // const board = game.createBoard();
+    document.getElementById('game').append(game.slot_);
+    document.getElementById('game').append(game.board_);
+    game.startGame();
+    console.log('jake test3---!!@@@!!--2423');  
+    console.log(game.state_);  
 }
 
 if (document.readyState === 'loading') {
