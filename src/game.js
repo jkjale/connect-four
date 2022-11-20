@@ -37,6 +37,7 @@ class Game {
                 let columnClicked = i;
                 this.updateState(columnClicked); 
                 this.updateBoard(columns);
+                let currentPlayerNumberSaved = this.currentPlayer_;
                 if (this.currentPlayer_ === Game.PLAYER_ID.PLAYER_ONE) {
                     this.currentPlayer_ = Game.PLAYER_ID.PLAYER_TWO;
                     piece.style.backgroundColor = 'yellow';
@@ -44,12 +45,198 @@ class Game {
                     this.currentPlayer_ = Game.PLAYER_ID.PLAYER_ONE;
                     piece.style.backgroundColor = 'red';
                 }
+
+                if (this.getWinningPlayer(this.state_) !== 0) {
+                    let tileCoordinates = this.getWinningTiles(this.state_, currentPlayerNumberSaved);
+                    console.log('tileCoordinates:');
+                    console.log(tileCoordinates);
+                    let directionToDraw = this.getDirection(tileCoordinates);
+                    let strikeLineClassName = '';
+
+                    if (directionToDraw === 'horizontal') {
+                        strikeLineClassName = 'strikeRow';
+                    }
+                    if (directionToDraw === 'vertical') {
+                        strikeLineClassName = 'strikeColumn';
+                    }
+                    if (directionToDraw === 'leftDiagonal') {
+                        strikeLineClassName = 'strikeLeftDiagonal';
+                    }
+                    if (directionToDraw === 'rightDiagonal') {
+                        strikeLineClassName = 'strikeRightDiagonal';
+                    }
+
+                    for (let i = 0; i < tileCoordinates.length; i++) {
+                        let column = tileCoordinates[i][0];
+                        let row = tileCoordinates[i][1];
+                        let innerTileId = 'innerTile-' + row + '-' + column;
+
+                        let strikeLine = document.createElement('div');
+                        let divNeedsToBeStriked = document.getElementById(innerTileId);
+                        strikeLine.className = strikeLineClassName;
+                        divNeedsToBeStriked.append(strikeLine);
+                    }
+                }
+
+                if (this.getWinningPlayer(this.state_) === 1) {
+                    console.log('Player 1 wins!');
+                } else if (this.getWinningPlayer(this.state_) === 2) {
+                    console.log('Player 2 wins!');
+                }
             });
 
         } 
     }
 
+
+    // takes in the state as argument
+    // this returns [[x,x], [x,x], [x,x], [x,x]]
+    getWinningTiles(state, playerNumber) {
+
+            
+        // check row
+        for (let i = 0; i < state.length; i++){
+            for (let j = 0; j < state[i].length - 3; j++) {
+                if (state[i][j] === playerNumber && state[i][j+1] === playerNumber 
+                    && state[i][j+2] === playerNumber && state[i][j+3] === playerNumber) {
+                    return [[i, j], [i, j+1], [i, j+2], [i, j+3]]; 
+                }  
+            }
+        }
+
+        // check column
+        // winning case for a column:  [4,0], [5,0], [6,0], [7,0] 
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+            // [0,0], [1,1], [2,2], [3,3], [4,4]
+
+            // left diagonal needs to be able to start from [0,1] and needs to be able to end at [7, 8];
+            // so we will need to loop through number of rows
+        
+    }
+
+
+    // takes in an argument of [[x,x], [x,x], [x,x], [x,x]] which is a returned value from getWinningTiles()
+    // this returns 'horizontal', 'vertical', etc.
+    getDirection(arr) {
+        let direction = '';
+        let rowCounter = 0;
+        let columnCounter = 0;
+
+        for (let i = 0; i < arr.length; i++) {
+            let rowNum = arr[0][0];
+            if (arr[i][0] === rowNum) {
+                rowCounter++;
+            }
+
+            if (arr[i][0] === i + 4) {
+                columnCounter++;
+            }
+            
+        }
+
+        if(rowCounter === 4) {
+            direction = 'horizontal';
+        }
+
+        if(columnCounter === 4) {
+            direction = 'vertical';
+        }
+
+        return direction;
+    }
+
+
+
+
+    
+
+
+
+    // this returns a 0, 1, or 2
+    checkWhichPlayerOwnsARow(state) {
+        for (let i = 0; i < this.row_; i++) {
+            let playerOneRowCounter = 0;
+            let playerTwoRowCounter = 0;
+        
+            for (let j = 0; j < this.column_; j++) {
+                if (state[i][j] === 1) {
+                    playerOneRowCounter++;
+                } else if (state[i][j] === 2) {
+                    playerTwoRowCounter++;
+                }
+            }
+        
+            if (playerOneRowCounter === 4) {
+                return 1;
+            }
+            if (playerTwoRowCounter === 4) {
+                return 2;
+            }
+        }
+        return 0;
+    }
+
+    checkWhichPlayerOwnsAColumn(state) {
+        for (let i = 0; i < this.column_; i++) {
+            let playerOneColumnCounter = 0;
+            let playerTwoColumnCounter = 0;
+        
+            for (let j = 0; j < this.row_; j++) {
+                if (state[j][i] === 1) {
+                    playerOneColumnCounter++;
+                } else if (state[j][i] === 2) {
+                    playerTwoColumnCounter++;
+                }
+            }
+        
+            if (playerOneColumnCounter === 4) {
+                return 1;
+            }
+            if (playerTwoColumnCounter === 4) {
+                return 2;
+            }
+        }
+        return 0;
+    }
+    
+
+
+
+    // this returns a 0, 1, or 2
+    getWinningPlayer(state) {
+        let rowWinner = this.checkWhichPlayerOwnsARow(state);
+        let columnWinner = this.checkWhichPlayerOwnsAColumn(state);
+        
+        if (rowWinner !== 0) {
+            return rowWinner;
+        }
+
+        if (columnWinner !== 0) {
+            return columnWinner;
+        }
+    }
    
+
+
+
+
+
+
+
+
 
     /*
         1. create a function to initialize a state when the game starts; 
@@ -71,7 +258,6 @@ class Game {
         return board;
     }
 
-
     updateState(columnNumber) {
         let row = this.state_.length - 1;
         while (this.state_[row][columnNumber] !== 0) {
@@ -85,10 +271,6 @@ class Game {
         }
     }
         
-
-
-
-    
     updateBoard(col) {
         for (let i = 0; i < col.length; i++) {
             for (let j = 0; j < this.state_.length; j++) {
@@ -103,6 +285,7 @@ class Game {
     }
 
     
+
 
 
     createSlot() {
@@ -127,12 +310,13 @@ class Game {
             for (let j = 0; j < this.row_; j++) {
                 let tile = document.createElement('div');
                 tile.className = 'tile';
+                tile.id = 'tile-' + i + '-' + j;
 
                 let innerTile = document.createElement('div');
                 innerTile.className = 'innerTile';
-                innerTile.id = 'innerTile-' + i;
-                tile.appendChild(innerTile);
-                    
+                innerTile.id = 'innerTile-' + i + '-' + j;
+
+                tile.append(innerTile);
                 column.append(tile);
             }
             this.board_.append(column);

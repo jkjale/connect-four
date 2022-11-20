@@ -44,6 +44,7 @@ body {
     height: 100px;
     margin: 0 auto;
     float: left;
+    /* border: 1px solid yellow; */
 }
 
 
@@ -58,3 +59,42 @@ body {
     background-color: white;
 }
 
+
+
+.strikeRow {
+    width: 100px;
+    height: 10px;
+    margin-top: 35px;
+    margin-left: -10px;
+    background: green;
+    position: absolute;
+} 
+
+.strikeColumn {
+    width: 10px;
+    height: 100px;
+    margin-left: 35px;
+    margin-top: -10px;
+    background: green;
+    position: absolute;
+}
+
+.strikeLeftDiagonal {
+    width: 143px;
+    height: 10px;
+    margin-top: 35px;
+    margin-left: -81px;
+    transform: translate(50px) rotate(45deg);
+    background: green;
+    position: absolute;
+}  
+  
+.strikeRightDiagonal {
+    width: 143px;
+    height: 10px;
+    margin-top: 35px;
+    margin-left: -81px;
+    transform: translate(50px) rotate(-45deg);
+    background: green;
+    position: absolute;
+} 
