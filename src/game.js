@@ -66,6 +66,9 @@ class Game {
                         strikeLineClassName = 'strikeRightDiagonal';
                     }
 
+                    console.log('directiontodraw: ' + directionToDraw);
+                    console.log('strikelinename: ' + strikeLineClassName);
+
                     for (let i = 0; i < tileCoordinates.length; i++) {
                         let column = tileCoordinates[i][0];
                         let row = tileCoordinates[i][1];
@@ -95,8 +98,8 @@ class Game {
 
             
         // check row
-        for (let i = 0; i < state.length; i++){
-            for (let j = 0; j < state[i].length - 3; j++) {
+        for (let i = 0; i < this.row_; i++){
+            for (let j = 0; j < this.column_ - 3; j++) {
                 if (state[i][j] === playerNumber && state[i][j+1] === playerNumber 
                     && state[i][j+2] === playerNumber && state[i][j+3] === playerNumber) {
                     return [[i, j], [i, j+1], [i, j+2], [i, j+3]]; 
@@ -106,8 +109,15 @@ class Game {
 
         // check column
         // winning case for a column:  [4,0], [5,0], [6,0], [7,0] 
+        for (let i = 0; i < this.row_ - 3; i++){
+            for (let j = 0; j < this.column_; j++) {
+                if (state[i][j] === playerNumber && state[i+1][j] === playerNumber 
+                    && state[i+2][j] === playerNumber && state[i+3][j] === playerNumber) {
+                    return [[i, j], [i+1, j], [i+2, j], [i+3, j]]; 
+                }  
+            }
+        }
 
-        
 
 
 
@@ -130,18 +140,21 @@ class Game {
 
     // takes in an argument of [[x,x], [x,x], [x,x], [x,x]] which is a returned value from getWinningTiles()
     // this returns 'horizontal', 'vertical', etc.
-    getDirection(arr) {
+    getDirection(winningTilesArray) {
         let direction = '';
         let rowCounter = 0;
         let columnCounter = 0;
 
-        for (let i = 0; i < arr.length; i++) {
-            let rowNum = arr[0][0];
-            if (arr[i][0] === rowNum) {
+        for (let i = 0; i < winningTilesArray.length; i++) {
+            let rowNum = winningTilesArray[0][0];
+
+            // check row
+            if (winningTilesArray[i][0] === rowNum) {
                 rowCounter++;
             }
 
-            if (arr[i][0] === i + 4) {
+            // check column
+            if (winningTilesArray[i][0] === i + winningTilesArray.length) {
                 columnCounter++;
             }
             
