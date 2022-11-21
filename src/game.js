@@ -94,9 +94,7 @@ class Game {
 
     // takes in the state as argument
     // this returns [[x,x], [x,x], [x,x], [x,x]]
-    getWinningTiles(state, playerNumber) {
-
-            
+    getWinningTiles(state, playerNumber) {  
         // check row
         for (let i = 0; i < this.row_; i++){
             for (let j = 0; j < this.column_ - 3; j++) {
@@ -106,9 +104,7 @@ class Game {
                 }  
             }
         }
-
         // check column
-        // winning case for a column:  [4,0], [5,0], [6,0], [7,0] 
         for (let i = 0; i < this.row_ - 3; i++){
             for (let j = 0; j < this.column_; j++) {
                 if (state[i][j] === playerNumber && state[i+1][j] === playerNumber 
@@ -118,23 +114,28 @@ class Game {
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-            // [0,0], [1,1], [2,2], [3,3], [4,4]
-
-            // left diagonal needs to be able to start from [0,1] and needs to be able to end at [7, 8];
-            // so we will need to loop through number of rows
+        // check left diagonal
+        // [4,0], [5,1], [6,2], [7,3]
+        for (let i = 0; i < this.row_ - 3; i++){
+            for (let j = 0; j < this.column_ - 3; j++) {
+                if (state[i][j] === playerNumber && state[i+1][j+1] === playerNumber 
+                    && state[i+2][j+2] === playerNumber && state[i+3][j+3] === playerNumber) {
+                    return [[i, j], [i+1, j+1], [i+2, j+2], [i+3, j+3]]; 
+                }  
+            }
+        }
         
+        // check right diagonal
+        // [0,9], [1,8], [2,7], [3,6]
+        for (let i = 0; i < this.row_ - 3; i++){
+            for (let j = 0; j < this.column_ - 3; j++) {
+                if (state[i][j] === playerNumber && state[i+1][j+1] === playerNumber 
+                    && state[i+2][j+2] === playerNumber && state[i+3][j+3] === playerNumber) {
+                    return [[i, j], [i+1, j+1], [i+2, j+2], [i+3, j+3]]; 
+                }  
+            }
+        }
+
     }
 
 
@@ -144,30 +145,52 @@ class Game {
         let direction = '';
         let rowCounter = 0;
         let columnCounter = 0;
+        let leftDiagonalCounter = 0;
+        let rightDiagonalCounter = 0;
 
         for (let i = 0; i < winningTilesArray.length; i++) {
             let rowNum = winningTilesArray[0][0];
+            let columnNum = winningTilesArray[0][1];
+            let diffOfCoordinateNumbers = winningTilesArray[0][0] - winningTilesArray[0][1];
+            let sumOfCoordinateNumbers = winningTilesArray[0][0] + winningTilesArray[0][1];
 
             // check row
+            // [7,2], [7,3], [7,4], [7,5]
             if (winningTilesArray[i][0] === rowNum) {
                 rowCounter++;
             }
 
             // check column
-            if (winningTilesArray[i][0] === i + winningTilesArray.length) {
+            // [4,0], [5,0], [6,0], [7,0]
+            if (winningTilesArray[i][1] === columnNum) {
                 columnCounter++;
             }
-            
+
+            // check left diagonal
+            // [4,0], [5,1], [6,2], [7,3]
+            if (winningTilesArray[0][0] - winningTilesArray[0][1] === diffOfCoordinateNumbers) {
+                leftDiagonalCounter++;
+            }
+
+            // check right diagonal
+            // [0,9], [1,8], [2,7], [3,6]
+            if (winningTilesArray[0][0] + winningTilesArray[0][1] === sumOfCoordinateNumbers) {
+                rightDiagonalCounter++;
+            }
         }
 
         if(rowCounter === 4) {
             direction = 'horizontal';
         }
-
-        if(columnCounter === 4) {
+        else if(columnCounter === 4) {
             direction = 'vertical';
         }
-
+        else if(leftDiagonalCounter === 4) {
+            direction = 'leftDiagonal';
+        }
+        else if(rightDiagonalCounter === 4) {
+            direction = 'rightDiagonal';
+        }
         return direction;
     }
 
@@ -183,15 +206,14 @@ class Game {
         for (let i = 0; i < this.row_; i++) {
             let playerOneRowCounter = 0;
             let playerTwoRowCounter = 0;
-        
             for (let j = 0; j < this.column_; j++) {
                 if (state[i][j] === 1) {
                     playerOneRowCounter++;
-                } else if (state[i][j] === 2) {
+                } 
+                if (state[i][j] === 2) {
                     playerTwoRowCounter++;
                 }
-            }
-        
+            } 
             if (playerOneRowCounter === 4) {
                 return 1;
             }
@@ -206,21 +228,72 @@ class Game {
         for (let i = 0; i < this.column_; i++) {
             let playerOneColumnCounter = 0;
             let playerTwoColumnCounter = 0;
-        
             for (let j = 0; j < this.row_; j++) {
                 if (state[j][i] === 1) {
                     playerOneColumnCounter++;
-                } else if (state[j][i] === 2) {
+                } 
+                if (state[j][i] === 2) {
                     playerTwoColumnCounter++;
                 }
             }
-        
             if (playerOneColumnCounter === 4) {
                 return 1;
             }
             if (playerTwoColumnCounter === 4) {
                 return 2;
             }
+        }
+        return 0;
+    }
+
+    // check left diagonal
+    // [4,0], [5,1], [6,2], [7,3]
+    checkWhichPlayerOwnsALeftDiagonal(state) {
+        let playerOneCounter = 0;
+        let playerTwoCounter = 0;
+        for (let i = 0; i < this.row_ - 3; i++){
+            for (let j = 0; j < this.column_ - 3; j++) {
+                if (state[i][j] === 1 && state[i+1][j+1] === 1 
+                    && state[i+2][j+2] === 1 && state[i+3][j+3] === 1) {
+                    playerOneCounter++;
+                } 
+                if (state[i][j] === 2 && state[i+1][j+1] === 2 
+                    && state[i+2][j+2] === 2 && state[i+3][j+3] === 2) {
+                    playerTwoCounter++;
+                }  
+            }
+        }
+        if (playerOneCounter === 1) {
+            return 1;
+        }
+        if (playerTwoCounter === 1) {
+            return 2;
+        }
+        return 0;
+    }
+
+    // check right diagonal
+    // [0,9], [1,8], [2,7], [3,6]
+    checkWhichPlayerOwnsARightDiagonal(state) {
+        let playerOneCounter = 0;
+        let playerTwoCounter = 0;
+        for (let i = 0; i < this.row_ - 3; i++){
+            // for (let j = 0; j < this.column_ - 3; j++) {
+            //     if (state[i][j] === 1 && state[i+1][j+1] === 1 
+            //         && state[i+2][j+2] === 1 && state[i+3][j+3] === 1) {
+            //         playerOneCounter++; 
+            //     }  
+            //     if (state[i][j] === 2 && state[i+1][j+1] === 2 
+            //         && state[i+2][j+2] === 2 && state[i+3][j+3] === 2) {
+            //         playerOneCounter++; 
+            //     }  
+            // }
+        }
+        if (playerOneCounter === 1) {
+            return 1;
+        }
+        if (playerTwoCounter === 1) {
+            return 2;
         }
         return 0;
     }
@@ -232,13 +305,20 @@ class Game {
     getWinningPlayer(state) {
         let rowWinner = this.checkWhichPlayerOwnsARow(state);
         let columnWinner = this.checkWhichPlayerOwnsAColumn(state);
+        let leftDiagonalWinner = this.checkWhichPlayerOwnsALeftDiagonal(state);
+        let rightDiagonalWinner = this.checkWhichPlayerOwnsARightDiagonal(state);
         
         if (rowWinner !== 0) {
             return rowWinner;
         }
-
         if (columnWinner !== 0) {
             return columnWinner;
+        }
+        if (leftDiagonalWinner !== 0) {
+            return leftDiagonalWinner;
+        }
+        if (rightDiagonalWinner !== 0) {
+            return rightDiagonalWinner;
         }
     }
    

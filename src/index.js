@@ -7,7 +7,7 @@ function initApplication() {
     document.getElementById('game').append(game.slot_);
     document.getElementById('game').append(game.board_);
     game.startGame();
-    console.log('`1111#####@@@```@@@@123jake #11~~~~~~~111##...###==111==########test3---!!@@@!!--2423');  
+    console.log('`~~~~@@@@---111-----jake222221111#####@@@```@@@@123jake #11~~~~~~~111##...###==111==########test3---!!@@@!!--2423');  
     console.log(game.state_);  
 }
 
