@@ -6,6 +6,7 @@ class Game {
         this.state_ = this.createState();
         this.board_ = this.createBoard();
         this.currentPlayer_ = 1;
+        // this.diretion
     }
     
     static PLAYER_ID = {
@@ -93,7 +94,9 @@ class Game {
 
 
     // takes in the state as argument
-    // this returns [[x,x], [x,x], [x,x], [x,x]]
+    // this returns winning tiles [[x,x], [x,x], [x,x], [x,x]]
+    // run time: O(row*col)
+    // return another value OR add another property in Game object
     getWinningTiles(state, playerNumber) {  
         // check row
         for (let i = 0; i < this.row_; i++){
@@ -126,17 +129,18 @@ class Game {
         }
         
         // check right diagonal
-        // [0,9], [1,8], [2,7], [3,6]
+        // [4,9], [5,8], [6,7], [7,6]
         for (let i = 0; i < this.row_ - 3; i++){
-            for (let j = 0; j < this.column_ - 3; j++) {
-                if (state[i][j] === playerNumber && state[i+1][j+1] === playerNumber 
-                    && state[i+2][j+2] === playerNumber && state[i+3][j+3] === playerNumber) {
-                    return [[i, j], [i+1, j+1], [i+2, j+2], [i+3, j+3]]; 
+            for (let j = this.column_ - 1; j >= 3; j--) {
+                if (state[i][j] === playerNumber && state[i+1][j-1] === playerNumber 
+                    && state[i+2][j-2] === playerNumber && state[i+3][j-3] === playerNumber) {
+                    return [[i, j], [i+1, j-1], [i+2, j-2], [i+3, j-3]]; 
                 }  
             }
         }
-
     }
+
+    
 
 
     // takes in an argument of [[x,x], [x,x], [x,x], [x,x]] which is a returned value from getWinningTiles()
@@ -151,7 +155,7 @@ class Game {
         for (let i = 0; i < winningTilesArray.length; i++) {
             let rowNum = winningTilesArray[0][0];
             let columnNum = winningTilesArray[0][1];
-            let diffOfCoordinateNumbers = winningTilesArray[0][0] - winningTilesArray[0][1];
+            let diffOfCoordinateNumbers = Math.abs(winningTilesArray[0][0] - winningTilesArray[0][1]);
             let sumOfCoordinateNumbers = winningTilesArray[0][0] + winningTilesArray[0][1];
 
             // check row
@@ -173,7 +177,7 @@ class Game {
             }
 
             // check right diagonal
-            // [0,9], [1,8], [2,7], [3,6]
+            // [4,5], [5,4], [6,3], [7,2]
             if (winningTilesArray[0][0] + winningTilesArray[0][1] === sumOfCoordinateNumbers) {
                 rightDiagonalCounter++;
             }
@@ -181,14 +185,11 @@ class Game {
 
         if(rowCounter === 4) {
             direction = 'horizontal';
-        }
-        else if(columnCounter === 4) {
+        } else if(columnCounter === 4) {
             direction = 'vertical';
-        }
-        else if(leftDiagonalCounter === 4) {
+        } else if(leftDiagonalCounter === 4) {
             direction = 'leftDiagonal';
-        }
-        else if(rightDiagonalCounter === 4) {
+        } else if(rightDiagonalCounter === 4) {
             direction = 'rightDiagonal';
         }
         return direction;
@@ -278,16 +279,16 @@ class Game {
         let playerOneCounter = 0;
         let playerTwoCounter = 0;
         for (let i = 0; i < this.row_ - 3; i++){
-            // for (let j = 0; j < this.column_ - 3; j++) {
-            //     if (state[i][j] === 1 && state[i+1][j+1] === 1 
-            //         && state[i+2][j+2] === 1 && state[i+3][j+3] === 1) {
-            //         playerOneCounter++; 
-            //     }  
-            //     if (state[i][j] === 2 && state[i+1][j+1] === 2 
-            //         && state[i+2][j+2] === 2 && state[i+3][j+3] === 2) {
-            //         playerOneCounter++; 
-            //     }  
-            // }
+            for (let j = this.column_ - 1; j >= 3; j--) {
+                if (state[i][j] === 1 && state[i+1][j-1] === 1 
+                    && state[i+2][j-2] === 1 && state[i+3][j-3] === 1) {
+                    playerOneCounter++; 
+                }  
+                if (state[i][j] === 2 && state[i+1][j-1] === 2 
+                    && state[i+2][j-2] === 2 && state[i+3][j-3] === 2) {
+                    playerTwoCounter++; 
+                } 
+            }
         }
         if (playerOneCounter === 1) {
             return 1;
@@ -307,7 +308,6 @@ class Game {
         let columnWinner = this.checkWhichPlayerOwnsAColumn(state);
         let leftDiagonalWinner = this.checkWhichPlayerOwnsALeftDiagonal(state);
         let rightDiagonalWinner = this.checkWhichPlayerOwnsARightDiagonal(state);
-        
         if (rowWinner !== 0) {
             return rowWinner;
         }
@@ -320,6 +320,7 @@ class Game {
         if (rightDiagonalWinner !== 0) {
             return rightDiagonalWinner;
         }
+        return 0;
     }
    
 
